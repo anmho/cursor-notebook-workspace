@@ -44,21 +44,16 @@ The provider may restrict kernel debugging or performance counters even when CUD
 
 From Cursor: `Remote-SSH: Connect to Host...` -> select `GPU_HOST` -> open the remote `ml-lab` directory. Select the remote `.venv/bin/python` interpreter and the remote Jupyter kernel. The NVIDIA Nsight VS Code Edition recommendation is remote-only: NVIDIA documents Linux x86_64/arm64 hosts and CUDA Toolkit requirements; it is not installed on this Apple Silicon Mac.
 
-## Remote Jupyter through a local Cursor UI
-
-On the remote host:
+For a fundamentals-first setup, add a real host manually using [`ssh-config.example`](ssh-config.example), then use ordinary SSH commands:
 
 ```bash
-PORT=8888 ./scripts/remote_jupyter.sh
+ssh gpu-box
+cd ~/Developer/ml-lab
+uv sync
+nvidia-smi
 ```
 
-On the Mac, in another terminal:
-
-```bash
-ssh -N -L 8888:127.0.0.1:8888 GPU_HOST
-```
-
-In a `.ipynb` file, choose `Select Kernel` -> `Existing Jupyter Server`, enter `http://127.0.0.1:8888`, and paste the printed token. The server remains bound to remote localhost; do not use `--ip=0.0.0.0` or expose the token publicly.
+The optional local `gpu` command only wraps basic connection and read-only doctor commands. It does not provision machines, clone repositories, synchronize files, or manage Modal.
 
 ## Persistent experiments
 
@@ -69,4 +64,4 @@ uv run python scripts/train.py --device cuda --steps 10000
 tmux attach -t ml
 ```
 
-Use Git for source, persistent storage for checkpoints/datasets, and terminate the instance manually when finished. The repository's `dotfiles/gpu/bin/gpu` helper can connect, tunnel, and run a read-only remote doctor; its `up` and `down` commands intentionally refuse to provision or terminate paid resources.
+Use Git for source, persistent storage for checkpoints/datasets, and terminate the instance manually when finished. The separate `~/Developer/ml-workstation` helper can connect and run a read-only remote doctor; its `up` and `down` commands intentionally refuse to provision or terminate paid resources.

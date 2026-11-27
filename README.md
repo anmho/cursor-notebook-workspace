@@ -26,6 +26,9 @@ uv run ruff format .
 ## Notebook workflows
 
 - Jupyter notebook: open `notebooks/00_environment_check.ipynb`, select `ML Lab (.venv)`, and run cells with `Shift+Enter`. Use `Run All`, `Restart Kernel`, and `Clear All Outputs` from the notebook command palette.
+- Local PyTorch/MPS workbook: open `notebooks/03_cursor_workbook.ipynb` and run it in the local `ML Lab (.venv)` kernel.
+- Remote SSH/CUDA workbook: open `notebooks/04_remote_cuda_workbook.ipynb` after connecting the whole project with Cursor Remote SSH to a Linux/NVIDIA host.
+- Modal function-calling workbook: open `notebooks/05_modal_functions.ipynb` locally; only its decorated function executes on Modal.
 - Python cells: open `notebooks/01_tensor_playground.py` or `notebooks/02_training_visualization.py`; use the `# %%` controls or `Shift+Enter`. Both files also run from the terminal.
 - Cursor: use `Python: Select Interpreter` and choose `.venv/bin/python`; use `Jupyter: Select Notebook Kernel` for notebooks and `Remote-SSH: Connect to Host...` for a remote workspace.
 
@@ -68,34 +71,21 @@ uv run python scripts/train.py --device cuda --steps 10000
 
 The Linux CUDA wheel is selected by the platform marker in `pyproject.toml`; the NVIDIA driver, CUDA runtime/toolkit, and PyTorch wheel are separate concerns. Check the remote driver and toolkit with `nvidia-smi` and `nvcc --version` before adding Triton, Nsight, NCCL, or FlashAttention.
 
-## Remote Jupyter with a local UI
+## Modal Functions (optional, billable)
 
-On the remote host:
+Modal is the second supported GPU workflow. The notebook and local kernel stay on the Mac; only a decorated function is dispatched to Modal. It is separate from Cursor Remote SSH and does not synchronize project files.
 
-```bash
-cd ml-lab
-./scripts/remote_jupyter.sh
-```
-
-From the Mac, use a tunnel (replace `GPU_HOST` with an existing SSH host):
-
-```bash
-ssh -N -L 8888:127.0.0.1:8888 GPU_HOST
-```
-
-Connect Cursor's Jupyter extension to `http://127.0.0.1:8888` using the printed token (Select Kernel -> Existing Jupyter Server). The server stays bound to remote localhost and is not exposed publicly. Remote paths, installed packages, working directory, and datasets belong to the remote machine; only the notebook UI is local.
-
-## Modal (optional, billable)
-
-Do not run this without approval. After approval, install the optional dependency and authenticate:
+Do not run these without approving cloud execution and checking the cost. For Modal Functions:
 
 ```bash
 uv sync --extra remote
-modal token new
-MODAL_GPU=T4 modal run remote/modal_example.py
+uv run modal setup
+MODAL_GPU=T4 uv run modal run remote/modal_example.py
 ```
 
-The example builds a reproducible image, runs a CUDA matmul, reports GPU information, and is structured for adding a named Modal Volume for checkpoints. No cloud resource is provisioned by this local setup.
+The example builds a reproducible image, runs a CUDA matmul, and reports GPU information. The notebook integration requires compatible local and remote Python/library versions. See the official [Modal Jupyter integration](https://modal.com/docs/guide/jupyter-notebooks) guide.
+
+No cloud resource is provisioned by this local setup.
 
 ## GPU infrastructure notes
 
