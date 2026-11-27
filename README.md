@@ -22,12 +22,48 @@ Detailed instructions are in [notebooks/README.md](notebooks/README.md), and eac
 
 The environment lives at .venv/. It is intentionally ignored by Git and recreated from pyproject.toml and uv.lock.
 
+## Cursor configuration included in this repository
+
+The `.vscode/` folder contains the workspace-level setup that belongs with this
+example:
+
+- `settings.json` points Python and notebook discovery at the project-local
+  `.venv/bin/python`.
+- `extensions.json` recommends Python, Jupyter, Ruff, and Remote SSH.
+
+These files are intentionally repository-local. They travel with the example
+and do not replace your global Cursor settings. No custom notebook keybinding is
+needed: Cursor's native Jupyter behavior is `Control+Enter` to execute the
+current cell and `Command+Enter` to add a code cell.
+
+The global Cursor files in your home directory (`settings.json` and
+`keybindings.json`) are personal application settings, so they are backed up
+separately and are not copied into this repository.
+
+### What had to change for this example
+
+Required for a fresh clone:
+
+1. `pyproject.toml` declares the project name, Python version, and packages.
+2. `uv.lock` records the exact resolved dependency versions.
+3. `.vscode/settings.json` makes the project `.venv` the default Python and
+   notebook interpreter.
+4. `.vscode/extensions.json` tells Cursor which extensions this workspace uses.
+5. The README and notebook instructions use the workspace folder name.
+
+Not required:
+
+- No global Cursor keybinding change.
+- No global Jupyter kernel registration.
+- No copied `.venv`; `uv sync` recreates it locally.
+- No file-sync service for Remote SSH; Cursor opens the remote checkout.
+
 ## Existing workspace: start to finish
 
 Run this on the Mac:
 
 ```bash
-cd ~/Developer/ml-lab
+cd ~/Developer/cursor-notebook-workspace
 uv sync
 uv run pytest
 uv run ruff check .
@@ -199,8 +235,8 @@ On the remote machine, create or clone the project checkout and install its envi
 
 ```bash
 cd ~/Developer
-git clone YOUR_REPOSITORY_URL ml-lab
-cd ~/Developer/ml-lab
+git clone YOUR_REPOSITORY_URL cursor-notebook-workspace
+cd ~/Developer/cursor-notebook-workspace
 uv sync
 nvidia-smi
 uv run python -c "import torch; print(torch.cuda.is_available(), torch.cuda.get_device_name(0))"
@@ -212,7 +248,7 @@ In Cursor:
 
 1. Run Remote-SSH: Connect to Host....
 2. Choose gpu-box.
-3. Open the remote ~/Developer/ml-lab folder.
+3. Open the remote ~/Developer/cursor-notebook-workspace folder.
 4. Open notebooks/remote_cuda.ipynb.
 5. Select the remote .venv/bin/python through Select Another Kernel... -> Python Environments....
 6. Click Run All.
@@ -228,7 +264,7 @@ Modal keeps the notebook and its local kernel on the Mac. Only a decorated funct
 Prepare the local project:
 
 ```bash
-cd ~/Developer/ml-lab
+cd ~/Developer/cursor-notebook-workspace
 uv sync --extra remote
 uv run modal setup
 ```
@@ -246,7 +282,7 @@ The final cell is billable and requires authentication. It returns the remote GP
 ## Verify the repository
 
 ```bash
-cd ~/Developer/ml-lab
+cd ~/Developer/cursor-notebook-workspace
 uv run pytest
 uv run ruff check .
 uv run ruff format --check .

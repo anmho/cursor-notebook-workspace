@@ -1,5 +1,5 @@
 [project]
-name = "ml-lab"
+name = "cursor-notebook-workspace"
 version = "0.1.0"
 description = "Minimal Cursor notebook workflow tests."
 requires-python = ">=3.12,<3.13"

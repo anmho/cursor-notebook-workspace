@@ -19,7 +19,7 @@ Install these Cursor extensions:
 Open the project:
 
 ```bash
-cd ~/Developer/ml-lab
+cd ~/Developer/cursor-notebook-workspace
 uv sync
 cursor -r .
 ```
@@ -59,7 +59,7 @@ If Cursor prints `pydevd warning: Computing repr ... was slow`, the cell may sti
 ### Setup
 
 ```bash
-cd ~/Developer/ml-lab
+cd ~/Developer/cursor-notebook-workspace
 uv sync
 cursor -r .
 ```
@@ -108,8 +108,8 @@ Run on the remote host:
 
 ```bash
 cd ~/Developer
-git clone YOUR_REPOSITORY_URL ml-lab
-cd ~/Developer/ml-lab
+git clone YOUR_REPOSITORY_URL cursor-notebook-workspace
+cd ~/Developer/cursor-notebook-workspace
 uv sync
 nvidia-smi
 uv run python -c "import torch; print(torch.cuda.is_available(), torch.cuda.get_device_name(0))"
@@ -121,7 +121,7 @@ There is no automatic file synchronization. Cursor opens and edits the remote ch
 
 1. Run Remote-SSH: Connect to Host....
 2. Choose gpu-box.
-3. Open the remote ml-lab folder.
+3. Open the remote cursor-notebook-workspace folder.
 4. Open remote_cuda.ipynb.
 5. Select the remote .venv/bin/python using Select Another Kernel... -> Python Environments....
 6. Click Run All.
@@ -137,7 +137,7 @@ Commit or push code, close the notebook, disconnect Remote SSH, and stop or term
 ### Setup
 
 ```bash
-cd ~/Developer/ml-lab
+cd ~/Developer/cursor-notebook-workspace
 uv sync --extra remote
 uv run modal setup
 ```
@@ -146,7 +146,7 @@ Authentication is stored outside this repository. Never commit Modal credentials
 
 ### Run
 
-1. Keep Cursor connected to the local ml-lab folder.
+1. Keep Cursor connected to the local cursor-notebook-workspace folder.
 2. Open modal_functions.ipynb.
 3. Select the local .venv/bin/python using the kernel flow above.
 4. Run the first cell: this starts the local notebook kernel and loads Modal.
@@ -165,7 +165,7 @@ The final call is billable. It returns the remote CUDA device, GPU name, and res
 ## Checks
 
 ```bash
-cd ~/Developer/ml-lab
+cd ~/Developer/cursor-notebook-workspace
 uv run pytest
 uv run ruff check .
 uv run ruff format --check .
