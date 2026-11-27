@@ -79,6 +79,10 @@ Use the notebook Restart menu to replace the running process and reset Python st
 
 ## Remote SSH + CUDA: remote_cuda.ipynb
 
+RunPod is the Terraform-backed default. For the provider alternatives and
+their different lifecycle models, see
+[`docs/remote-gpu-providers.md`](../docs/remote-gpu-providers.md).
+
 ### Requirements
 
 - A Linux host with an NVIDIA GPU.

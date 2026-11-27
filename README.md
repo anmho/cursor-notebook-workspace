@@ -10,6 +10,8 @@ using Cursor notebooks with project-local Python environments. It demonstrates:
 There is no automatic file synchronization layer. In Remote SSH mode, Cursor opens the remote checkout directly. In Modal mode, only the decorated function runs remotely.
 
 Detailed instructions are in [notebooks/README.md](notebooks/README.md), and each notebook repeats the instructions it needs in its first markdown cell.
+Provider-specific choices are summarized in
+[docs/remote-gpu-providers.md](docs/remote-gpu-providers.md).
 
 ## What is installed
 
@@ -234,6 +236,11 @@ Open [notebooks/local_pytorch.ipynb](notebooks/local_pytorch.ipynb) and run all 
 Restart resets the local kernel state by replacing the running process. Close Cursor or explicitly shut down the kernel to end it. The notebook file and saved outputs remain on disk; live Python variables do not.
 
 ## Remote SSH + NVIDIA CUDA workflow
+
+RunPod is the Terraform-backed default for this workflow. Vast.ai and Lambda
+Cloud are documented alternatives, while Modal is the separate remote-function
+workflow. See [Remote GPU provider choices](docs/remote-gpu-providers.md) for
+the exact provider split.
 
 This mode requires a Linux host with direct SSH access, an NVIDIA driver, and CUDA-capable PyTorch. It is the mode for CUDA, Triton, nvcc, profiling, and full remote repository work; those host tools are separate from the Python dependencies installed by this example.
 
