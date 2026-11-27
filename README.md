@@ -50,8 +50,9 @@ and `Command+Enter` to add a code cell. If those keys are overridden or focus
 is elsewhere, use the cell run button or the notebook toolbar's `Run All`.
 
 The global Cursor files in your home directory (`settings.json` and
-`keybindings.json`) are personal application settings, so they are backed up
-separately and are not copied into this repository.
+`keybindings.json`) are personal application settings. They are not copied into
+this repository; the current machine's snapshot is kept separately from the
+project.
 
 ### What had to change for this example
 
@@ -200,6 +201,10 @@ print("Device:", device)
 Click inside the cell and press `Control+Enter` (`⌃⏎`) to run it. `Command+Enter` (`⌘⏎`) adds a code cell. Click **Run All** to execute the entire notebook.
 
 The printed Python path should contain `my-ml-project/.venv/bin/python`. Running the first cell starts the kernel process on demand.
+
+This recipe creates a blank project skeleton. It does not copy this example's
+notebooks or `.vscode/` conveniences; create the notebook in the previous step
+and copy any project-specific configuration you want.
 
 ### 9. Save the new repository
 

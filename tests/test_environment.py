@@ -1,5 +1,8 @@
+import sys
+
 import torch
 
 
 def test_torch_is_installed() -> None:
+    assert ".venv" in sys.executable
     assert torch.__version__
