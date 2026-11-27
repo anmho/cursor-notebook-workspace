@@ -8,7 +8,7 @@ if [[ -f "$CONFIG_FILE" ]]; then
 fi
 
 GPU_HOST="${GPU_HOST:-}"
-GPU_WORKSPACE="${GPU_WORKSPACE:-$HOME/ml-lab}"
+GPU_WORKSPACE="${GPU_WORKSPACE:-$HOME/Developer/ml-lab}"
 GPU_PORT="${GPU_PORT:-8888}"
 
 usage() {
