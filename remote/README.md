@@ -36,6 +36,8 @@ uv run python kernels/cupy_square.py
 uv run python kernels/triton_add.py
 ```
 
+Open `notebooks/04_remote_cuda_workbook.ipynb` in the remote Cursor window and select the remote `.venv` kernel. It asserts `torch.cuda.is_available()` and uses `torch.device("cuda")`; it never silently falls back to CPU or MPS.
+
 The provider may restrict kernel debugging or performance counters even when CUDA execution works. Treat those as separate checks.
 
 ## Cursor Remote SSH
