@@ -34,11 +34,11 @@ uv sync
 cursor -r .
 ```
 
-Open `notebooks/03_cursor_workbook.ipynb`, select the local `.venv` Jupyter kernel, and click `Run All`.
+Open `notebooks/local_pytorch.ipynb`, select the local `.venv` Jupyter kernel, and click `Run All`.
 
 ## Remote SSH test
 
-Provision a Linux/NVIDIA host and add it to `~/.ssh/config`. Then use Cursor's `Remote-SSH: Connect to Host...` command, open the remote checkout, select its `.venv` kernel, and run `notebooks/04_remote_cuda_workbook.ipynb`.
+Provision a Linux/NVIDIA host and add it to `~/.ssh/config`. Then use Cursor's `Remote-SSH: Connect to Host...` command, open the remote checkout, select its `.venv` kernel, and run `notebooks/remote_cuda.ipynb`.
 
 The remote notebook requires CUDA and intentionally refuses CPU/MPS fallback. No file synchronization is used; the whole project is opened remotely.
 
@@ -50,7 +50,7 @@ uv sync --extra remote
 uv run modal setup
 ```
 
-Open `notebooks/05_modal_functions.ipynb` with the local kernel and run all cells. Only the decorated function executes on Modal. The final cell is billable and requires Modal authentication.
+Open `notebooks/modal_functions.ipynb` with the local kernel and run all cells. Only the decorated function executes on Modal. The final cell is billable and requires Modal authentication.
 
 ## Checks
 
