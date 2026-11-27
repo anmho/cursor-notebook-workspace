@@ -14,6 +14,7 @@ Install these Cursor extensions:
 
 - Python (ms-python.python)
 - Jupyter (ms-toolsai.jupyter)
+- Ruff (charliermarsh.ruff)
 - Remote - SSH (anysphere.remote-ssh)
 
 Open the project:
