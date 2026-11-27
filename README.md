@@ -237,6 +237,28 @@ Restart resets the local kernel state by replacing the running process. Close Cu
 
 This mode requires a Linux host with direct SSH access, an NVIDIA driver, and CUDA-capable PyTorch. It is the mode for CUDA, Triton, nvcc, profiling, and full remote repository work; those host tools are separate from the Python dependencies installed by this example.
 
+### Provision the GPU box first
+
+The repository cannot create a rented machine without your provider account and
+billing authorization. Do this manually in RunPod, Vast, or another GPU
+provider:
+
+1. Create a Linux GPU instance/Pod with an NVIDIA GPU and a PyTorch/CUDA image.
+2. Enable direct SSH access and a public IP or reachable SSH endpoint.
+3. Add your Mac's public key (`~/.ssh/id_ed25519.pub`) to the instance. Never
+   upload or paste the private key.
+4. Attach persistent storage if you need checkpoints or datasets to survive
+   instance replacement.
+5. Set the provider's auto-stop or termination limit so an idle box cannot run
+   indefinitely.
+6. Record the provider's SSH host, port, username, and the GPU instance's
+   status. These values become the `gpu-box` entry below.
+
+For RunPod, the equivalent Pod configuration includes SSH enabled, port 22/tcp
+exposed, and a public IP when using a directly reachable Pod. The provider's
+connection/details panel supplies the actual host, port, and user; do not use
+the placeholders in the example.
+
 On the Mac, add a host to ~/.ssh/config:
 
 ```sshconfig

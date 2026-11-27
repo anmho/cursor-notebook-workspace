@@ -87,6 +87,24 @@ Use the notebook Restart menu to replace the running process and reset Python st
 - uv installed on the remote host.
 - A remote checkout of this repository.
 
+### Provision the box first
+
+This notebook does not create the provider instance. Before opening Cursor,
+manually create a Linux GPU instance/Pod in RunPod, Vast, or another provider:
+
+1. Choose an NVIDIA GPU and a PyTorch/CUDA Linux image.
+2. Enable direct SSH and a public IP or reachable SSH endpoint.
+3. Add the Mac public key from `~/.ssh/id_ed25519.pub`; never upload the private
+   key.
+4. Attach persistent storage for checkpoints or datasets if needed.
+5. Configure an automatic stop/termination limit.
+6. Copy the actual SSH host, port, username, and instance status from the
+   provider's connection panel.
+
+For a RunPod Pod, use SSH enabled with port `22/tcp` exposed and a public IP
+when direct SSH is required. The connection panel or Pod details provide the
+real host and port.
+
 Add the host locally:
 
 ```sshconfig
