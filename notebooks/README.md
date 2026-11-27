@@ -1,6 +1,22 @@
-# Notebook workflows
+# Notebook runbooks
 
-These are three separate ways to use the same minimal project. Open the folder in Cursor first:
+This folder contains three complete workflows. They share the same project dependency files but have different execution locations:
+
+| Notebook | Kernel/function location | Use it for |
+| --- | --- | --- |
+| local_pytorch.ipynb | Mac .venv kernel | Learning, MPS, CPU |
+| remote_cuda.ipynb | Remote Linux .venv kernel | CUDA, Triton, nvcc, profiling |
+| modal_functions.ipynb | Local kernel; remote function container | Discrete remote GPU calls |
+
+## One-time Cursor setup
+
+Install these Cursor extensions:
+
+- Python (ms-python.python)
+- Jupyter (ms-toolsai.jupyter)
+- Remote - SSH (anysphere.remote-ssh)
+
+Open the project:
 
 ```bash
 cd ~/Developer/ml-lab
@@ -8,83 +24,134 @@ uv sync
 cursor -r .
 ```
 
-In Cursor, open a notebook by selecting it in the Explorer. Use the kernel picker in the upper-right of the notebook editor — not the Command Palette search.
-
 ![Cursor notebook kernel picker flow](../docs/images/cursor-kernel-picker-flow.svg)
 
-The hermetic flow is: click the current kernel button (`Select Kernel` on first use, or the current kernel name) -> `Select Another Kernel...` -> `Python Environments...` -> choose `.venv/bin/python`. The Command Palette's `Jupyter: Manage Access To Jupyter Kernels` result does not select the notebook kernel.
+The hermetic kernel flow is:
 
-### Starting the kernel
+```text
+current kernel name / Select Kernel
+  -> Select Another Kernel...
+  -> Python Environments...
+  -> .venv/bin/python
+```
 
-There is no separate Start Kernel button in the normal Cursor workflow. Selecting `.venv/bin/python` chooses the interpreter; clicking `Run All` or running the first code cell starts the kernel process on demand. Confirm it started when the toolbar shows the kernel name and the cell receives an execution number such as `[1]`.
+The kernel starts automatically when you run the first code cell. There is no separate kernel-start command in the normal Cursor workflow. Confirm startup when the toolbar shows the selected environment, the cell receives an execution number such as [1], and the first output prints sys.executable inside .venv.
 
-## 1. Local PyTorch: `local_pytorch.ipynb`
+Do not use the Command Palette's Jupyter: Manage Access To Jupyter Kernels; it manages extension access and is not the notebook kernel picker.
 
-Purpose: run ordinary PyTorch experiments on this Mac.
+## Local PyTorch: local_pytorch.ipynb
 
-1. Open [`local_pytorch.ipynb`](local_pytorch.ipynb).
-2. In the notebook toolbar above the first cell, click `Select Kernel` (or the current kernel name).
-3. Choose `Select Another Kernel...`, then `Python Environments...`, then choose the project `.venv/bin/python` environment.
-4. Click `Run All` in that same notebook toolbar.
+### Setup
 
-The notebook prints the Python/PyTorch/device information, performs a matrix multiplication, runs autograd, and renders a plot. On this Mac it should select Apple MPS; CPU is the fallback. The first code cell starts the local kernel if it is not already running.
+```bash
+cd ~/Developer/ml-lab
+uv sync
+cursor -r .
+```
 
-## 2. Cursor Remote SSH + CUDA: `remote_cuda.ipynb`
+### Run
 
-Purpose: develop and execute the entire project on a Linux/NVIDIA machine. Notebook files and the Python environment are remote in this mode; there is no file-sync layer.
+1. Open local_pytorch.ipynb from the Explorer.
+2. Select the project .venv/bin/python using the kernel flow above.
+3. Click Run All.
 
-Prerequisite: add a real GPU host to `~/.ssh/config`, then verify it in a terminal:
+The first cell starts the local Python kernel and verifies its executable, Python version, PyTorch version, and device. The remaining cells test matrix multiplication, autograd, and inline plotting.
+
+### Stop
+
+Use the notebook Restart menu to reset Python state, or close Cursor to end the local kernel. Saved notebook outputs remain in the .ipynb; variables in memory do not.
+
+## Remote SSH + CUDA: remote_cuda.ipynb
+
+### Requirements
+
+- A Linux host with an NVIDIA GPU.
+- SSH access from the Mac.
+- An NVIDIA driver and a working nvidia-smi command.
+- uv installed on the remote host.
+- A remote checkout of this repository.
+
+Add the host locally:
+
+```sshconfig
+Host gpu-box
+    HostName YOUR_GPU_HOST
+    User YOUR_REMOTE_USER
+    IdentityFile ~/.ssh/id_ed25519
+```
+
+Test it:
 
 ```bash
 ssh gpu-box
-```
-
-On the remote machine, from the project checkout:
-
-```bash
-uv sync
 nvidia-smi
 ```
 
-In Cursor:
+### Prepare the remote checkout
 
-1. Run `Remote-SSH: Connect to Host...`.
-2. Choose `gpu-box`.
-3. Open the remote `ml-lab` folder.
-4. Open [`remote_cuda.ipynb`](remote_cuda.ipynb).
-5. In the notebook toolbar above the first cell, click `Select Kernel` (or the current kernel name).
-6. Choose `Select Another Kernel...`, then `Python Environments...`, then choose the remote `.venv/bin/python` environment.
-7. Click `Run All` in that same notebook toolbar.
-
-The first code cell starts the kernel on the remote host and prints the CUDA version and GPU name. The notebook intentionally raises an error if CUDA is unavailable; it never falls back to Mac MPS or CPU.
-
-## 3. Modal function calling: `modal_functions.ipynb`
-
-Purpose: keep the notebook local while dispatching one selected function to a remote Modal GPU.
-
-Prepare the local project once:
+Run on the remote host:
 
 ```bash
+cd ~/Developer
+git clone YOUR_REPOSITORY_URL ml-lab
+cd ~/Developer/ml-lab
+uv sync
+nvidia-smi
+uv run python -c "import torch; print(torch.cuda.is_available(), torch.cuda.get_device_name(0))"
+```
+
+There is no automatic file synchronization. Cursor opens and edits the remote checkout directly.
+
+### Run in Cursor
+
+1. Run Remote-SSH: Connect to Host....
+2. Choose gpu-box.
+3. Open the remote ml-lab folder.
+4. Open remote_cuda.ipynb.
+5. Select the remote .venv/bin/python using Select Another Kernel... -> Python Environments....
+6. Click Run All.
+
+The first cell starts the remote kernel and requires CUDA. The notebook intentionally fails instead of falling back to CPU or MPS.
+
+### Stop and release resources
+
+Commit or push code, close the notebook, disconnect Remote SSH, and stop or terminate the GPU instance with its provider. Closing Cursor alone does not stop a rented machine.
+
+## Modal function calling: modal_functions.ipynb
+
+### Setup
+
+```bash
+cd ~/Developer/ml-lab
 uv sync --extra remote
 uv run modal setup
 ```
 
-Then:
+Authentication is stored outside this repository. Never commit Modal credentials.
 
-1. Keep Cursor connected to the local folder.
-2. Open [`modal_functions.ipynb`](modal_functions.ipynb).
-3. In the notebook toolbar above the first cell, click `Select Kernel` (or the current kernel name).
-4. Choose `Select Another Kernel...`, then `Python Environments...`, then choose the local `.venv/bin/python` environment.
-5. Run the first two cells. They load Modal locally and define the remote function.
-6. Run the final cell. It calls `remote_matmul.remote(...)` on a Modal T4 GPU.
+### Run
 
-The local kernel starts when you run the first cell. The final cell is a billable cloud operation and requires Modal authentication; that cell starts or reuses the separate remote Modal function container. The notebook file and local source remain on the Mac; only the decorated function runs remotely.
+1. Keep Cursor connected to the local ml-lab folder.
+2. Open modal_functions.ipynb.
+3. Select the local .venv/bin/python using the kernel flow above.
+4. Run the first cell: this starts the local notebook kernel and loads Modal.
+5. Run the second cell: this defines the remote GPU function locally.
+6. Run the final cell: this calls the function on a Modal T4 GPU.
 
-## Which one should I use?
+The final call is billable. It returns the remote CUDA device, GPU name, and result shape. Modal handles the remote container lifecycle; there is no persistent remote notebook kernel to shut down.
 
-| Notebook | Execution | Best for |
-| --- | --- | --- |
-| `local_pytorch.ipynb` | Mac MPS/CPU | Learning and ordinary experiments |
-| `remote_cuda.ipynb` | Full remote Linux/NVIDIA project | CUDA, Triton, `nvcc`, profiling |
-| `modal_functions.ipynb` | Local notebook + selected remote function | Isolated GPU experiments |
+## Kernel versus server versus function
 
+- A notebook kernel is a running Python process holding cell state in memory.
+- A Jupyter server manages notebook connections and starts kernels.
+- Cursor normally starts both pieces as needed.
+- A Modal function call is a separate remote execution; it is not the same as a persistent notebook kernel.
+
+## Checks
+
+```bash
+cd ~/Developer/ml-lab
+uv run pytest
+uv run ruff check .
+uv run ruff format --check .
+```
