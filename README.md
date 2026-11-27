@@ -54,23 +54,112 @@ In Cursor's notebook UI, `Control+Enter` (`⌃⏎`) executes the current cell. `
 
 If `pydevd` reports that computing a tensor repr was slow, that is debugger inspection overhead rather than a failed cell. The smoke-test tensors are intentionally small; confirm success from the cell execution number and output.
 
-## Create a fresh equivalent workspace
+## Create a fresh example workspace from scratch
 
-This creates a new independent project with the same fundamentals:
+This is the exact sequence for creating a new independent ML notebook repository:
+
+### 1. Create the folder
 
 ```bash
 mkdir -p ~/Developer/my-ml-project
 cd ~/Developer/my-ml-project
+```
+
+`mkdir` creates the folder. `cd` enters it.
+
+### 2. Create project metadata
+
+```bash
 uv init --python 3.12
+```
+
+This creates `pyproject.toml` and sets the project Python requirement to 3.12.
+
+### 3. Add dependencies
+
+```bash
 uv add torch numpy matplotlib
 uv add --dev jupyter ipykernel pytest ruff
+```
+
+`torch`, `numpy`, and `matplotlib` are runtime dependencies. `jupyter`, `ipykernel`, `pytest`, and `ruff` support notebooks and development checks.
+
+### 4. Create project folders and Git
+
+```bash
 mkdir -p notebooks tests
 git init
+```
+
+### 5. Create the local environment
+
+```bash
 uv sync
+```
+
+This creates `my-ml-project/.venv/` and installs the locked dependencies. It does not start a kernel.
+
+### 6. Open the project in Cursor
+
+```bash
 cursor -r .
 ```
 
-Then add your own notebook under notebooks/, select .venv/bin/python through the Cursor kernel picker, and run the first cell. The project is self-contained through its source, pyproject.toml, uv.lock, and folder-local .venv.
+If the `cursor` command is unavailable, open Cursor manually and choose **File -> Open Folder**.
+
+Install these Cursor extensions if needed:
+
+- Python (`ms-python.python`)
+- Jupyter (`ms-toolsai.jupyter`)
+- Remote - SSH (`anysphere.remote-ssh`)
+
+### 7. Create and select a notebook kernel
+
+In Cursor:
+
+1. Open the `notebooks` folder.
+2. Create `hello.ipynb`.
+3. Click the notebook's kernel button.
+4. Choose `Select Another Kernel...`.
+5. Choose `Python Environments...`.
+6. Choose `.venv/bin/python`.
+
+Do not run `ipykernel install --user`; that creates a global kernel registration. The folder-local `.venv/bin/python` is enough.
+
+### 8. Run a test cell
+
+Put this in the first code cell:
+
+```python
+import sys
+
+import torch
+
+print("Python:", sys.executable)
+print("PyTorch:", torch.__version__)
+
+if torch.backends.mps.is_available():
+    device = "mps"
+elif torch.cuda.is_available():
+    device = "cuda"
+else:
+    device = "cpu"
+
+print("Device:", device)
+```
+
+Click inside the cell and press `Control+Return` (`⌃⏎`) to run it. `Command+Return` (`⌘⏎`) adds a code cell. Click **Run All** to execute the entire notebook.
+
+The printed Python path should contain `my-ml-project/.venv/bin/python`. Running the first cell starts the kernel process on demand.
+
+### 9. Save the new repository
+
+```bash
+git add .
+git commit -m "Initialize ML project"
+```
+
+Each project is independent and contains its own `pyproject.toml`, `uv.lock`, `.venv/`, `notebooks/`, `tests/`, and Git history. The `.venv/` directory is ignored and recreated by `uv sync`.
 
 ## Local PyTorch workflow
 
