@@ -48,6 +48,12 @@ Selecting the interpreter chooses the kernel. Running the first code cell starts
 
 Do not use the Command Palette command Jupyter: Manage Access To Jupyter Kernels; that manages extension permissions and does not select the notebook kernel.
 
+### Keyboard controls on macOS
+
+In Cursor's notebook UI, `Control+Enter` (`⌃⏎`) executes the current cell. `Command+Enter` (`⌘⏎`) adds a new code cell. To execute the whole notebook, click `Run All` in the notebook toolbar.
+
+If `pydevd` reports that computing a tensor repr was slow, that is debugger inspection overhead rather than a failed cell. The smoke-test tensors are intentionally small; confirm success from the cell execution number and output.
+
 ## Create a fresh equivalent workspace
 
 This creates a new independent project with the same fundamentals:

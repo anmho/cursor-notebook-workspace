@@ -39,6 +39,21 @@ The kernel starts automatically when you run the first code cell. There is no se
 
 Do not use the Command Palette's Jupyter: Manage Access To Jupyter Kernels; it manages extension access and is not the notebook kernel picker.
 
+## macOS keyboard controls
+
+Cursor currently labels the notebook commands as follows:
+
+| Action | Key |
+| --- | --- |
+| Execute the current cell | `Control+Enter` (`⌃⏎`) |
+| Add a code cell | `Command+Enter` (`⌘⏎`) |
+| Run every cell | Click `Run All` in the notebook toolbar |
+| Restart the kernel | Click `Restart` in the notebook toolbar |
+
+Important: `Command+Enter` is not the run-cell shortcut here; it adds a code cell. Use `Control+Enter` to execute the selected cell.
+
+If Cursor prints `pydevd warning: Computing repr ... was slow`, the cell may still have completed successfully. That is debugger variable inspection timing, not a PyTorch failure. These smoke-test notebooks use small tensors to avoid unnecessary debugger inspection overhead.
+
 ## Local PyTorch: local_pytorch.ipynb
 
 ### Setup
