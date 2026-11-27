@@ -10,6 +10,10 @@ cursor -r .
 
 In Cursor, open a notebook by selecting it in the Explorer. Use the kernel picker in the upper-right of the notebook editor — not the Command Palette search.
 
+![Cursor Command Palette showing the wrong Jupyter command](../docs/images/cursor-command-palette-jupyter.png)
+
+This is the Command Palette, not the notebook kernel picker. The `Jupyter: Manage Access To Jupyter Kernels` result does not select the notebook kernel. Use the notebook toolbar's `Select Kernel` button instead.
+
 ## 1. Local PyTorch: `local_pytorch.ipynb`
 
 Purpose: run ordinary PyTorch experiments on this Mac.
