@@ -74,7 +74,7 @@ The first cell starts the local Python kernel and verifies its executable, Pytho
 
 ### Stop
 
-Use the notebook Restart menu to reset Python state, or close Cursor to end the local kernel. Saved notebook outputs remain in the .ipynb; variables in memory do not.
+Use the notebook Restart menu to replace the running process and reset Python state. Close Cursor or explicitly shut down the kernel to end it. Saved notebook outputs remain in the .ipynb; variables in memory do not.
 
 ## Remote SSH + CUDA: remote_cuda.ipynb
 
@@ -112,7 +112,7 @@ git clone YOUR_REPOSITORY_URL cursor-notebook-workspace
 cd ~/Developer/cursor-notebook-workspace
 uv sync
 nvidia-smi
-uv run python -c "import torch; print(torch.cuda.is_available(), torch.cuda.get_device_name(0))"
+uv run python -c "import torch; available = torch.cuda.is_available(); print({'cuda': available, 'device': torch.cuda.get_device_name(0) if available else None})"
 ```
 
 There is no automatic file synchronization. Cursor opens and edits the remote checkout directly.

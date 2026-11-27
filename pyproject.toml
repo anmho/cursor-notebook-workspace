@@ -1,7 +1,7 @@
 [project]
 name = "cursor-notebook-workspace"
 version = "0.1.0"
-description = "Minimal Cursor notebook workflow tests."
+description = "Cursor and Jupyter workspace example with local and remote GPU workflows."
 requires-python = ">=3.12,<3.13"
 dependencies = [
   "ipykernel>=7,<8",

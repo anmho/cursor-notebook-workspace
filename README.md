@@ -24,17 +24,30 @@ The environment lives at .venv/. It is intentionally ignored by Git and recreate
 
 ## Cursor configuration included in this repository
 
-The `.vscode/` folder contains the workspace-level setup that belongs with this
-example:
+The `.vscode/` folder contains optional workspace conveniences that belong with
+this example:
 
-- `settings.json` points Python and notebook discovery at the project-local
-  `.venv/bin/python`.
-- `extensions.json` recommends Python, Jupyter, Ruff, and Remote SSH.
+- `settings.json` tells the Python extension and new terminals to prefer the
+  project-local `.venv/bin/python`.
+- `extensions.json` recommends Python, Jupyter, Ruff, and Remote SSH. It does
+  not install extensions.
 
-These files are intentionally repository-local. They travel with the example
-and do not replace your global Cursor settings. No custom notebook keybinding is
-needed: Cursor's native Jupyter behavior is `Control+Enter` to execute the
-current cell and `Command+Enter` to add a code cell.
+These files do not start a kernel or force a notebook kernel selection. In a
+fresh Cursor window, select the notebook kernel explicitly:
+
+1. Click the notebook toolbar's current kernel button.
+2. Choose `Select Another Kernel...`.
+3. Choose `Python Environments...`.
+4. Choose `.venv/bin/python`.
+
+After that, clicking `Run All` or executing the first cell starts the kernel
+process on demand. Cursor may remember the selection in that notebook's
+metadata, but the repository settings alone do not guarantee that behavior.
+
+This repository does not define notebook keybindings. In the currently tested
+Cursor setup, the native labels are `Control+Enter` to execute the current cell
+and `Command+Enter` to add a code cell. If those keys are overridden or focus
+is elsewhere, use the cell run button or the notebook toolbar's `Run All`.
 
 The global Cursor files in your home directory (`settings.json` and
 `keybindings.json`) are personal application settings, so they are backed up
@@ -46,13 +59,12 @@ Required for a fresh clone:
 
 1. `pyproject.toml` declares the project name, Python version, and packages.
 2. `uv.lock` records the exact resolved dependency versions.
-3. `.vscode/settings.json` makes the project `.venv` the default Python and
-   notebook interpreter.
-4. `.vscode/extensions.json` tells Cursor which extensions this workspace uses.
-5. The README and notebook instructions use the workspace folder name.
+3. The README and notebook instructions explain how to select the project
+   interpreter as the notebook kernel.
 
-Not required:
+Conveniences, not requirements:
 
+- `.vscode/settings.json` and `.vscode/extensions.json`.
 - No global Cursor keybinding change.
 - No global Jupyter kernel registration.
 - No copied `.venv`; `uv sync` recreates it locally.
@@ -185,7 +197,7 @@ else:
 print("Device:", device)
 ```
 
-Click inside the cell and press `Control+Return` (`⌃⏎`) to run it. `Command+Return` (`⌘⏎`) adds a code cell. Click **Run All** to execute the entire notebook.
+Click inside the cell and press `Control+Enter` (`⌃⏎`) to run it. `Command+Enter` (`⌘⏎`) adds a code cell. Click **Run All** to execute the entire notebook.
 
 The printed Python path should contain `my-ml-project/.venv/bin/python`. Running the first cell starts the kernel process on demand.
 
@@ -196,7 +208,12 @@ git add .
 git commit -m "Initialize ML project"
 ```
 
-Each project is independent and contains its own `pyproject.toml`, `uv.lock`, `.venv/`, `notebooks/`, `tests/`, and Git history. The `.venv/` directory is ignored and recreated by `uv sync`.
+Each project is independent and contains its own `pyproject.toml`, `uv.lock`, `notebooks/`, `tests/`, and Git history. Running `uv sync` creates the ignored `.venv/` directory locally; it is not committed.
+
+If you physically move an existing checkout to a new folder name, run
+`uv sync --reinstall` once. Environment entry-point scripts can contain the
+old absolute folder path after a move; a fresh clone only needs ordinary
+`uv sync`.
 
 ## Local PyTorch workflow
 
@@ -204,16 +221,16 @@ Open [notebooks/local_pytorch.ipynb](notebooks/local_pytorch.ipynb) and run all 
 
 - the active Python executable is the project .venv;
 - PyTorch imports successfully;
-- the selected device is MPS when available, otherwise CPU;
+- the selected device is MPS when available, otherwise CPU on the Mac;
 - matrix multiplication works;
 - autograd produces gradients; and
 - Matplotlib renders inline.
 
-Stop the local kernel with the notebook Restart menu or by closing Cursor. The notebook file and saved outputs remain on disk; live Python variables do not.
+Restart resets the local kernel state by replacing the running process. Close Cursor or explicitly shut down the kernel to end it. The notebook file and saved outputs remain on disk; live Python variables do not.
 
 ## Remote SSH + NVIDIA CUDA workflow
 
-This mode requires a Linux host with direct SSH access, an NVIDIA driver, and CUDA-capable PyTorch. It is the mode for CUDA, Triton, nvcc, profiling, and full remote repository work.
+This mode requires a Linux host with direct SSH access, an NVIDIA driver, and CUDA-capable PyTorch. It is the mode for CUDA, Triton, nvcc, profiling, and full remote repository work; those host tools are separate from the Python dependencies installed by this example.
 
 On the Mac, add a host to ~/.ssh/config:
 
@@ -239,7 +256,7 @@ git clone YOUR_REPOSITORY_URL cursor-notebook-workspace
 cd ~/Developer/cursor-notebook-workspace
 uv sync
 nvidia-smi
-uv run python -c "import torch; print(torch.cuda.is_available(), torch.cuda.get_device_name(0))"
+uv run python -c "import torch; available = torch.cuda.is_available(); print({'cuda': available, 'device': torch.cuda.get_device_name(0) if available else None})"
 ```
 
 If uv is not installed on the remote host, install it there using the official installer or your system package manager, then rerun uv sync.
