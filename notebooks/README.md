@@ -112,8 +112,39 @@ git remote add origin YOUR_REPOSITORY_URL
 git push -u origin main
 ```
 
-For a direct CLI path, authenticate RunPod's official `runpodctl` and create a
-Pod with SSH, persistent storage, and an automatic stop limit:
+### Provision the GPU box with Terraform (preferred)
+
+Use the existing [`anmho/terraform`](https://github.com/anmho/terraform)
+repository. The `projects/cursor-gpu` root is the infrastructure definition
+for this notebook workflow; it creates one disposable RunPod NVIDIA pod with
+direct SSH and outputs the host, port, and user.
+
+From the Terraform repository:
+
+```bash
+export RUNPOD_API_KEY='YOUR_RUNPOD_API_KEY'
+git clone https://github.com/anmho/terraform.git ~/Developer/terraform
+cd ~/Developer/terraform
+terraform -chdir=projects/cursor-gpu init -reconfigure -backend-config=backend.gcs.hcl
+terraform -chdir=projects/cursor-gpu plan
+terraform -chdir=projects/cursor-gpu apply
+terraform -chdir=projects/cursor-gpu output
+```
+
+Before the first apply, register the public key matching the SSH identity you
+will use from Cursor in RunPod. The root intentionally does not replace the
+account-wide SSH-key set. Use `ssh_direct_host`, `ssh_direct_port`, and
+`ssh_direct_username` from the outputs for the `gpu-box` SSH entry below.
+When finished, release the pod and its ephemeral disk:
+
+```bash
+terraform -chdir=projects/cursor-gpu destroy
+```
+
+### CLI fallback
+
+If Terraform is unavailable, authenticate RunPod's official `runpodctl` and
+create a Pod with SSH and an automatic stop limit:
 
 ```bash
 runpodctl gpu list
@@ -130,12 +161,7 @@ runpodctl pod create \
 runpodctl pod get POD_ID
 ```
 
-If you already manage GPU infrastructure with Terraform, run that repository's
-`terraform init`, `terraform plan`, `terraform apply`, and `terraform output`
-instead. Use its outputs for the SSH host, port, and user; do not duplicate
-provider-specific Terraform resources in this notebook repo.
-
-### Provision the box first
+### Manual UI fallback
 
 This notebook does not create the provider instance. Before opening Cursor,
 manually create a Linux GPU instance/Pod in RunPod, Vast, or another provider:

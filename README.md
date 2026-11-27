@@ -266,11 +266,46 @@ git push -u origin main
 If you are testing this example itself, use
 `https://github.com/anmho/cursor-notebook-workspace.git` as the repository URL.
 
-### Provision the box from the CLI (preferred)
+### Provision the box with Terraform (preferred)
 
-The CLI path avoids the provider dashboard after account/API-key setup. The
-following is a RunPod example; equivalent commands can be used with another
-provider or an existing Terraform repository:
+The preferred infrastructure path is the existing
+[`anmho/terraform`](https://github.com/anmho/terraform) repository. Its
+standalone `projects/cursor-gpu` root creates one disposable RunPod NVIDIA
+pod, exposes direct SSH, and outputs the connection details Cursor needs.
+
+Before applying, create a RunPod API key and register the matching public SSH
+key in RunPod. The Terraform root intentionally does not manage the
+account-wide SSH-key set, because managing that set could remove keys used by
+other pods.
+
+From a checkout of the Terraform repository:
+
+```bash
+export RUNPOD_API_KEY='YOUR_RUNPOD_API_KEY'
+git clone https://github.com/anmho/terraform.git ~/Developer/terraform
+cd ~/Developer/terraform
+terraform -chdir=projects/cursor-gpu init -reconfigure -backend-config=backend.gcs.hcl
+terraform -chdir=projects/cursor-gpu plan
+terraform -chdir=projects/cursor-gpu apply
+terraform -chdir=projects/cursor-gpu output
+```
+
+The default is a community-cloud RTX 3090. Change `gpu_type_id` or
+`cloud=SECURE` if that GPU is unavailable. The pod remains billable while it
+is running; release it when finished:
+
+```bash
+terraform -chdir=projects/cursor-gpu destroy
+```
+
+Use `ssh_direct_host`, `ssh_direct_port`, and `ssh_direct_username` from the
+Terraform outputs to create the `gpu-box` entry below. Use the direct SSH
+output for Cursor; the proxy output is only an interactive shell.
+
+### CLI fallback (when Terraform is unavailable)
+
+The direct CLI path avoids the provider dashboard after account/API-key setup.
+This is a fallback, not a second configuration to maintain:
 
 ```bash
 runpodctl gpu list
@@ -287,13 +322,7 @@ runpodctl pod create \
 runpodctl pod get POD_ID
 ```
 
-Use the returned SSH host, port, and user. If your infrastructure is managed
-by Terraform, run that repository's `terraform init`, `terraform plan`,
-`terraform apply`, and `terraform output` instead of duplicating provider
-definitions here. This example cannot guess another repository's resource
-schema.
-
-### Provision the GPU box first
+### Manual UI fallback
 
 The repository cannot create a rented machine without your provider account and
 billing authorization. Do this manually in RunPod, Vast, or another GPU
