@@ -5,7 +5,7 @@ This is a small, reproducible workspace for ML engineering education, RL, system
 ## First run
 
 ```bash
-cd ~/Developer/ml-engineering-template
+cd ~/Developer/ml-lab
 uv python install 3.12
 uv sync
 uv run python scripts/doctor.py
@@ -45,13 +45,13 @@ On a remote box, compare the custom kernels to the PyTorch reference before prof
 
 ## Remote SSH GPU workflow
 
-Existing SSH hosts were preserved. For a host already configured in `~/.ssh/config`:
+For a host configured in `~/.ssh/config`:
 
 ```bash
 ssh GPU_HOST
 git clone <your-repository-url>
 curl -LsSf https://astral.sh/uv/install.sh | sh
-cd ml-engineering-template
+cd ml-lab
 uv python install 3.12
 uv sync
 uv run python scripts/doctor.py
@@ -73,7 +73,7 @@ The Linux CUDA wheel is selected by the platform marker in `pyproject.toml`; the
 On the remote host:
 
 ```bash
-cd ml-engineering-template
+cd ml-lab
 ./scripts/remote_jupyter.sh
 ```
 
@@ -104,7 +104,7 @@ For a Linux NVIDIA box, provision and verify the driver first, then choose a com
 ## Daily reference
 
 ```bash
-cd ~/Developer/ml-engineering-template
+cd ~/Developer/ml-lab
 uv sync
 uv run python scripts/doctor.py
 uv run pytest && uv run ruff check .
@@ -112,6 +112,12 @@ uv run python scripts/train.py --device auto --steps 100
 ```
 
 Use MPS locally with `--device mps`; use CUDA remotely with `--device cuda`. An explicit unavailable device fails instead of silently falling back.
+
+## Verified on this Mac
+
+The local Cursor workbook is `notebooks/03_cursor_workbook.ipynb`. In Cursor, choose `Select Kernel` -> `Jupyter Kernel...` -> `ML Lab (.venv) (Python 3.12.12)`, then choose `Run All`. The workbook was rerun successfully in the Cursor notebook UI: PyTorch 2.11.0 selected Apple MPS, autograd completed, and the inline loss plot rendered.
+
+The CUDA-only workbook is `notebooks/04_remote_cuda_workbook.ipynb`. It intentionally fails rather than falling back when no NVIDIA/CUDA host is attached. This Mac has no `nvidia-smi` or `nvcc`, so remote validation requires setting `GPU_HOST` to a real SSH-accessible Linux GPU box first; no paid GPU instance is currently configured or running.
 
 ## Dotfiles and GPU helper
 
