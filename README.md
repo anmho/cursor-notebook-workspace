@@ -36,7 +36,7 @@ uv sync
 cursor -r .
 ```
 
-Open `notebooks/local_pytorch.ipynb`. In the notebook toolbar, click `Select Kernel` -> `Jupyter Kernel...`, choose the local `.venv` kernel, and click `Run All`. Do not use the Command Palette's `Jupyter: Manage Access To Jupyter Kernels` command; that is a different administrative action.
+Open `notebooks/local_pytorch.ipynb`. In the notebook toolbar, click `Select Kernel` (or the current kernel name) -> `Select Another Kernel...` -> `Python Environments...`, choose `.venv/bin/python`, and click `Run All`. Do not use the Command Palette's `Jupyter: Manage Access To Jupyter Kernels` command; that is a different administrative action.
 
 ## Remote SSH test
 
