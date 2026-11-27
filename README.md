@@ -6,6 +6,8 @@ This is intentionally a small validation project for three workflows:
 2. Cursor Remote SSH notebook with PyTorch/CUDA.
 3. Local Cursor notebook calling a remote Modal function.
 
+Notebook-specific usage instructions are in [`notebooks/README.md`](notebooks/README.md).
+
 ## Exact creation steps
 
 This is the complete sequence used to create a fresh equivalent workspace:
