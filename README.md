@@ -121,4 +121,4 @@ The CUDA-only workbook is `notebooks/04_remote_cuda_workbook.ipynb`. It intentio
 
 ## Dotfiles and GPU helper
 
-The provider-neutral helper and its instructions live in `dotfiles/README.md`. After copying the example config to `~/.config/ml-lab/gpu.env`, use `gpu doctor`, `gpu connect`, `gpu tunnel`, and `gpu remote-doctor` for an existing SSH host. Provisioning and termination intentionally remain manual so no paid GPU resource is created accidentally. Detailed remote checks are in `remote/README.md`.
+The optional provider-neutral helper is now maintained separately in `~/Developer/ml-workstation`. Provisioning and termination remain manual so no paid GPU resource is created accidentally. Detailed remote checks are in `remote/README.md`.
