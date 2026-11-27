@@ -1,0 +1,15 @@
+{
+  "recommendations": [
+    "ms-python.python",
+    "ms-python.debugpy",
+    "ms-toolsai.jupyter",
+    "charliermarsh.ruff",
+    "tamasfe.even-better-toml",
+    "anysphere.remote-ssh",
+    "openai.chatgpt",
+    "ms-vscode.cmake-tools",
+    "llvm-vs-code-extensions.vscode-clangd",
+    "NVIDIA.nsight-vscode-edition",
+    "rust-lang.rust-analyzer"
+  ]
+}
