@@ -1,9 +1,0 @@
-{
-  "version": "2.0.0",
-  "tasks": [
-    {"label": "uv sync", "type": "shell", "command": "uv sync", "problemMatcher": []},
-    {"label": "pytest", "type": "shell", "command": "uv run pytest", "group": "test", "problemMatcher": []},
-    {"label": "ruff check", "type": "shell", "command": "uv run ruff check .", "problemMatcher": []},
-    {"label": "Jupyter notebook", "type": "shell", "command": "uv run jupyter notebook", "problemMatcher": []}
-  ]
-}

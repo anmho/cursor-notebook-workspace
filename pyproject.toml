@@ -1,19 +1,12 @@
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
-
 [project]
 name = "ml-lab"
 version = "0.1.0"
-description = "A reproducible starter for ML and systems engineering experiments."
-readme = "README.md"
+description = "Minimal Cursor notebook workflow tests."
 requires-python = ">=3.12,<3.13"
 dependencies = [
   "ipykernel>=7,<8",
   "matplotlib>=3.10,<4",
   "numpy>=2.2,<3",
-  "plotly>=6,<7",
-  "scipy>=1.16,<2",
   "torch>=2.11,<2.12",
 ]
 
@@ -25,47 +18,15 @@ dev = [
 ]
 
 [project.optional-dependencies]
-hf = ["accelerate>=1.10,<2", "datasets>=4,<5", "transformers>=4.57,<5"]
-rl = ["gymnasium>=1.2,<2", "pettingzoo>=1.25,<2"]
-tracking = ["tensorboard>=2.20,<3", "wandb>=0.23,<1"]
-data = ["pandas>=2.3,<3", "polars>=1.35,<2", "pyarrow>=22,<23"]
-benchmark = ["psutil>=7,<8", "pytest-benchmark>=5.2,<6"]
 remote = ["modal>=1,<2"]
-gpu = [
-  "cupy-cuda12x>=13,<14; sys_platform == 'linux'",
-  "triton>=3.5,<4; sys_platform == 'linux'",
-]
-mlx = ["mlx>=0.30,<1"]
-
-[tool.hatch.build.targets.wheel]
-packages = ["src/ml_lab"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = "-ra"
 
 [tool.ruff]
 line-length = 100
 target-version = "py312"
-src = ["src"]
 
-[tool.ruff.lint]
-select = ["E", "F", "I", "B", "UP"]
-
-[tool.ruff.format]
-quote-style = "double"
-indent-style = "space"
-
-[tool.pyright]
-include = ["src", "scripts", "tests"]
-exclude = [".venv", "artifacts"]
-venvPath = "."
-venv = ".venv"
-typeCheckingMode = "basic"
-
-# uv uses PyPI on macOS (where PyTorch wheels expose MPS support) and the
-# official CUDA 13.0 index on Linux. CUDA-specific packages are never selected
-# for a macOS environment.
 [tool.uv.sources]
 torch = [{ index = "pytorch-cu130", marker = "sys_platform == 'linux'" }]
 
@@ -76,3 +37,5 @@ explicit = true
 
 [tool.uv]
 default-groups = ["dev"]
+package = false
+

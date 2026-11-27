@@ -1,9 +1,0 @@
-# Add a real host entry to ~/.ssh/config after provisioning a Linux/NVIDIA box.
-# Replace every placeholder; do not commit real addresses or credentials.
-Host gpu-box
-    HostName GPU_IP_OR_DNS_NAME
-    User LINUX_USERNAME
-    IdentityFile ~/.ssh/id_ed25519
-    ServerAliveInterval 30
-    ServerAliveCountMax 3
-
