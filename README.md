@@ -1,6 +1,7 @@
-# Minimal ML workstation
+# Cursor notebook workspace example
 
-This repository is a small, reproducible example of three ML workflows:
+This repository is a small, reproducible workspace example for setting up and
+using Cursor notebooks with project-local Python environments. It demonstrates:
 
 1. A local Cursor notebook running PyTorch on Apple MPS or CPU.
 2. A Cursor Remote SSH notebook running PyTorch on a remote NVIDIA GPU with CUDA.
