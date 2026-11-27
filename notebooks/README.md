@@ -14,6 +14,10 @@ In Cursor, open a notebook by selecting it in the Explorer. Use the kernel picke
 
 The hermetic flow is: click the current kernel button (`Select Kernel` on first use, or the current kernel name) -> `Select Another Kernel...` -> `Python Environments...` -> choose `.venv/bin/python`. The Command Palette's `Jupyter: Manage Access To Jupyter Kernels` result does not select the notebook kernel.
 
+### Starting the kernel
+
+There is no separate Start Kernel button in the normal Cursor workflow. Selecting `.venv/bin/python` chooses the interpreter; clicking `Run All` or running the first code cell starts the kernel process on demand. Confirm it started when the toolbar shows the kernel name and the cell receives an execution number such as `[1]`.
+
 ## 1. Local PyTorch: `local_pytorch.ipynb`
 
 Purpose: run ordinary PyTorch experiments on this Mac.
@@ -23,7 +27,7 @@ Purpose: run ordinary PyTorch experiments on this Mac.
 3. Choose `Select Another Kernel...`, then `Python Environments...`, then choose the project `.venv/bin/python` environment.
 4. Click `Run All` in that same notebook toolbar.
 
-The notebook prints the Python/PyTorch/device information, performs a matrix multiplication, runs autograd, and renders a plot. On this Mac it should select Apple MPS; CPU is the fallback.
+The notebook prints the Python/PyTorch/device information, performs a matrix multiplication, runs autograd, and renders a plot. On this Mac it should select Apple MPS; CPU is the fallback. The first code cell starts the local kernel if it is not already running.
 
 ## 2. Cursor Remote SSH + CUDA: `remote_cuda.ipynb`
 
@@ -52,7 +56,7 @@ In Cursor:
 6. Choose `Select Another Kernel...`, then `Python Environments...`, then choose the remote `.venv/bin/python` environment.
 7. Click `Run All` in that same notebook toolbar.
 
-The first cell prints the CUDA version and GPU name. The notebook intentionally raises an error if CUDA is unavailable; it never falls back to Mac MPS or CPU.
+The first code cell starts the kernel on the remote host and prints the CUDA version and GPU name. The notebook intentionally raises an error if CUDA is unavailable; it never falls back to Mac MPS or CPU.
 
 ## 3. Modal function calling: `modal_functions.ipynb`
 
@@ -74,7 +78,7 @@ Then:
 5. Run the first two cells. They load Modal locally and define the remote function.
 6. Run the final cell. It calls `remote_matmul.remote(...)` on a Modal T4 GPU.
 
-The final cell is a billable cloud operation and requires Modal authentication. The notebook file and local source remain on the Mac; only the decorated function runs remotely.
+The local kernel starts when you run the first cell. The final cell is a billable cloud operation and requires Modal authentication; that cell starts or reuses the separate remote Modal function container. The notebook file and local source remain on the Mac; only the decorated function runs remotely.
 
 ## Which one should I use?
 

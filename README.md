@@ -38,6 +38,8 @@ cursor -r .
 
 Open `notebooks/local_pytorch.ipynb`. In the notebook toolbar, click `Select Kernel` (or the current kernel name) -> `Select Another Kernel...` -> `Python Environments...`, choose `.venv/bin/python`, and click `Run All`. Do not use the Command Palette's `Jupyter: Manage Access To Jupyter Kernels` command; that is a different administrative action.
 
+Selecting `.venv/bin/python` chooses the kernel interpreter. `Run All` starts the kernel on demand; there is normally no separate start command in Cursor.
+
 ## Remote SSH test
 
 Provision a Linux/NVIDIA host and add it to `~/.ssh/config`. Then use Cursor's `Remote-SSH: Connect to Host...` command, open the remote checkout, select its `.venv` kernel, and run `notebooks/remote_cuda.ipynb`.
