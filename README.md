@@ -237,6 +237,62 @@ Restart resets the local kernel state by replacing the running process. Close Cu
 
 This mode requires a Linux host with direct SSH access, an NVIDIA driver, and CUDA-capable PyTorch. It is the mode for CUDA, Triton, nvcc, profiling, and full remote repository work; those host tools are separate from the Python dependencies installed by this example.
 
+### Empty folder to remote GPU workflow
+
+Start a new project on the Mac before provisioning the box:
+
+```bash
+mkdir -p ~/Developer/my-remote-ml-project
+cd ~/Developer/my-remote-ml-project
+uv init --python 3.12
+uv add torch numpy matplotlib
+uv add --dev jupyter ipykernel pytest ruff
+mkdir -p notebooks tests
+uv sync
+git init
+git add .
+git commit -m "Initialize notebook project"
+cursor -r .
+```
+
+Create a notebook in `notebooks/`, select `.venv/bin/python`, and run the local
+smoke test. Push this repository before cloning it on the remote host:
+
+```bash
+git remote add origin YOUR_REPOSITORY_URL
+git push -u origin main
+```
+
+If you are testing this example itself, use
+`https://github.com/anmho/cursor-notebook-workspace.git` as the repository URL.
+
+### Provision the box from the CLI (preferred)
+
+The CLI path avoids the provider dashboard after account/API-key setup. The
+following is a RunPod example; equivalent commands can be used with another
+provider or an existing Terraform repository:
+
+```bash
+runpodctl gpu list
+runpodctl pod create \
+  --name cursor-notebook-workspace \
+  --image "runpod/pytorch:latest" \
+  --gpu-id "NVIDIA GeForce RTX 3090" \
+  --container-disk-in-gb 20 \
+  --volume-in-gb 50 \
+  --volume-mount-path /workspace \
+  --ports "22/tcp" \
+  --ssh \
+  --stop-after 4h
+runpodctl pod get POD_ID
+```
+
+Use the returned SSH host, port, and user. If your infrastructure is managed
+by Terraform, run that repository's `terraform init`, `terraform plan`,
+`terraform apply`, and `terraform output` instead of duplicating provider
+definitions here. This example cannot guess another repository's resource
+schema.
+
 ### Provision the GPU box first
 
 The repository cannot create a rented machine without your provider account and
@@ -279,8 +335,8 @@ On the remote machine, create or clone the project checkout and install its envi
 
 ```bash
 cd ~/Developer
-git clone YOUR_REPOSITORY_URL cursor-notebook-workspace
-cd ~/Developer/cursor-notebook-workspace
+git clone YOUR_REPOSITORY_URL my-remote-ml-project
+cd ~/Developer/my-remote-ml-project
 uv sync
 nvidia-smi
 uv run python -c "import torch; available = torch.cuda.is_available(); print({'cuda': available, 'device': torch.cuda.get_device_name(0) if available else None})"

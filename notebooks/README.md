@@ -87,6 +87,54 @@ Use the notebook Restart menu to replace the running process and reset Python st
 - uv installed on the remote host.
 - A remote checkout of this repository.
 
+### Empty folder and CLI provisioning
+
+Create a new project on the Mac first:
+
+```bash
+mkdir -p ~/Developer/my-remote-ml-project
+cd ~/Developer/my-remote-ml-project
+uv init --python 3.12
+uv add torch numpy matplotlib
+uv add --dev jupyter ipykernel pytest ruff
+mkdir -p notebooks tests
+uv sync
+git init
+git add .
+git commit -m "Initialize notebook project"
+cursor -r .
+```
+
+Push it before cloning it on the remote host:
+
+```bash
+git remote add origin YOUR_REPOSITORY_URL
+git push -u origin main
+```
+
+For a direct CLI path, authenticate RunPod's official `runpodctl` and create a
+Pod with SSH, persistent storage, and an automatic stop limit:
+
+```bash
+runpodctl gpu list
+runpodctl pod create \
+  --name cursor-notebook-workspace \
+  --image "runpod/pytorch:latest" \
+  --gpu-id "NVIDIA GeForce RTX 3090" \
+  --container-disk-in-gb 20 \
+  --volume-in-gb 50 \
+  --volume-mount-path /workspace \
+  --ports "22/tcp" \
+  --ssh \
+  --stop-after 4h
+runpodctl pod get POD_ID
+```
+
+If you already manage GPU infrastructure with Terraform, run that repository's
+`terraform init`, `terraform plan`, `terraform apply`, and `terraform output`
+instead. Use its outputs for the SSH host, port, and user; do not duplicate
+provider-specific Terraform resources in this notebook repo.
+
 ### Provision the box first
 
 This notebook does not create the provider instance. Before opening Cursor,
@@ -127,8 +175,8 @@ Run on the remote host:
 
 ```bash
 cd ~/Developer
-git clone YOUR_REPOSITORY_URL cursor-notebook-workspace
-cd ~/Developer/cursor-notebook-workspace
+git clone YOUR_REPOSITORY_URL my-remote-ml-project
+cd ~/Developer/my-remote-ml-project
 uv sync
 nvidia-smi
 uv run python -c "import torch; available = torch.cuda.is_available(); print({'cuda': available, 'device': torch.cuda.get_device_name(0) if available else None})"
